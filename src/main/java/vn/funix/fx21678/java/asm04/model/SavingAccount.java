@@ -1,4 +1,4 @@
 package vn.funix.fx21678.java.asm04.model;
 
-public class SavingAccount {
+public class SavingAccount extends Account {
 }
