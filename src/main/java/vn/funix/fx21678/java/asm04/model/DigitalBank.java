@@ -16,10 +16,7 @@ public class DigitalBank extends Bank {
             return;
         }
         List<Customer> customers = ls.stream().map(Customer::new).collect(Collectors.toList());
-
         for (Customer customer : customers) {
-
         }
-
     }
 }

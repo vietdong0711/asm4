@@ -1,8 +1,5 @@
 package vn.funix.fx21678.java.asm04.service;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,33 +11,33 @@ import java.util.List;
 public class BinaryFileService {
 
     public static <T> List<T> readFile(String filename) {
-        List<T> objects = new ArrayList<>();
+        try{
+            FileInputStream readData = new FileInputStream(filename);
+            ObjectInputStream readStream = new ObjectInputStream(readData);
 
-        try (ObjectInputStream file = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
-            boolean eof = false;
-            while (!eof) {
-                try {
-                    T object = (T) file.readObject();
-                    objects.add(object);
-                } catch (EOFException | ClassNotFoundException e) {
-                    eof = true;
-                }
-            }
-        } catch (EOFException e) {
-            return new ArrayList<>();
-        } catch (IOException e) {
-            System.out.println("IO Exception: " + e.getMessage());
+            List<T> rs = (ArrayList<T>) readStream.readObject();
+            readStream.close();
+            return rs;
+
+        }catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return new ArrayList<T>();
         }
-        return objects;
+//        return null;
     }
 
-    public static <T> void writeFile(String filename, List<T> objects) {
-        try (ObjectOutputStream file = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))) {
-            for (T obj : objects) {
-                file.writeObject(obj);
-            }
-        } catch (IOException io) {
-            io.printStackTrace();
+    public static <T> void writeFile(String filename , List<T> objects) throws IOException {
+        //write to file
+        try{
+            FileOutputStream writeData = new FileOutputStream(filename);
+            ObjectOutputStream writeStream = new ObjectOutputStream(writeData);
+
+            writeStream.writeObject(objects);
+            writeStream.flush();
+            writeStream.close();
+
+        }catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

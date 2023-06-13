@@ -15,7 +15,7 @@ public class TextFileService {
         List<List<String>> rs = new ArrayList<>();
 
         String line = bufferedReader.readLine();
-        while (line != null){
+        while (line != null) {
             List<String> strings = Arrays.asList(line.split(COMMA_DELIMITER));
             rs.add(strings);
             line = bufferedReader.readLine();

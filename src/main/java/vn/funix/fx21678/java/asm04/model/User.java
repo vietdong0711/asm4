@@ -1,6 +1,8 @@
 package vn.funix.fx21678.java.asm04.model;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private String name;
     private String customerId;
 
