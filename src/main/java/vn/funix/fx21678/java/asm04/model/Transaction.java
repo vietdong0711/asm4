@@ -12,6 +12,18 @@ public class Transaction implements Serializable {
     private boolean status;
     private TransactionType type;
 
+    public Transaction(){
+    }
+
+    public Transaction(String id, String accountNumber, double amount, String time, boolean status, TransactionType type) {
+        this.id = id;
+        this.accountNumber = accountNumber;
+        this.amount = amount;
+        this.time = time;
+        this.status = status;
+        this.type = type;
+    }
+
     public String getId() {
         return id;
     }

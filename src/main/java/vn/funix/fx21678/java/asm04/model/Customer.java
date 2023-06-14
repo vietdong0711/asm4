@@ -60,11 +60,11 @@ public class Customer extends User implements Serializable {
                 tong += acc.getBalance();
             }
         }
-        System.out.printf("%18s|%18s|%18s|%18s\n", this.getCustomerId(), this.getName(), this.isPremium() ? "Premium" : "Normal", dcf.format(tong) + "đ");
+        System.out.printf("%12s |%18s|%18s|%18s\n", this.getCustomerId(), this.getName(), this.isPremium() ? "Premium" : "Normal", dcf.format(tong) + "đ");
         int i = 1;
         if (this.getAccounts() != null && !this.getAccounts().isEmpty()) {
             for (Account acc : this.getAccounts()) {
-                System.out.printf("%-3s%15s|%18s|%37s\n", i, acc.getAccountNumber(), "SAVINGS", dcf.format(acc.getBalance()) + "đ");
+                System.out.printf("%-3s%9s |%18s|%37s\n", i, acc.getAccountNumber(), "SAVINGS", dcf.format(acc.getBalance()) + "đ");
                 i++;
             }
         }

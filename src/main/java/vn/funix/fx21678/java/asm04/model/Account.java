@@ -19,10 +19,10 @@ public class Account implements Serializable {
     public Account(){
     }
 
-    public Account(String customerId, String accountNumber, String balance){
+    public Account(String customerId, String accountNumber, double balance){
         this.customerId = customerId;
         this.accountNumber = accountNumber;
-        this.balance = Double.parseDouble(balance);
+        this.balance = balance;
     }
 
     public Account(String[] arr){
