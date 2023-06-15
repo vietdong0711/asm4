@@ -1,5 +1,6 @@
 package vn.funix.fx21678.java.asm04.model;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -67,6 +68,13 @@ public class Customer extends User implements Serializable {
                 System.out.printf("%-3s%9s |%18s|%37s\n", i, acc.getAccountNumber(), "SAVINGS", dcf.format(acc.getBalance()) + "đ");
                 i++;
             }
+        }
+    }
+
+    public void displayTransactionInformation() throws IOException {
+        this.displayInformation();
+        for (Account a : getAccounts()) {
+            a.displayTransactionsList();
         }
     }
 

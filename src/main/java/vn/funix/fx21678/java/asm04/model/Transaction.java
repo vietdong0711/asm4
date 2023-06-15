@@ -1,6 +1,9 @@
 package vn.funix.fx21678.java.asm04.model;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class Transaction implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -82,5 +85,13 @@ public class Transaction implements Serializable {
                 ", status=" + status +
                 ", type=" + type +
                 '}';
+    }
+
+    public void show(){
+        Locale locale = new Locale("vi", "VI");
+        String pattern = "###,###,###,###";
+        DecimalFormat dcf = (DecimalFormat) NumberFormat.getNumberInstance(locale);
+        dcf.applyPattern(pattern);
+        System.out.printf("%-3s%9s |%18s|%17s | %18s\n", "[GD]", this.accountNumber, this.type, dcf.format(this.amount) + "đ", this.time );
     }
 }
