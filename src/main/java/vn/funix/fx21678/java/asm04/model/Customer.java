@@ -1,12 +1,21 @@
 package vn.funix.fx21678.java.asm04.model;
 
+import vn.funix.fx21678.java.asm04.common.IReport;
+import vn.funix.fx21678.java.asm04.dao.AccountDao;
+import vn.funix.fx21678.java.asm04.dao.TransactionDao;
+
+import javax.swing.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Customer extends User implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -31,7 +40,7 @@ public class Customer extends User implements Serializable {
         this.setName(ls.get(1));
     }
 
-    public boolean isPremium() {
+    public boolean isPremium() throws IOException {
         if (this.getAccounts() != null && !this.getAccounts().isEmpty()) {
             for (Account acc : accounts) {
                 if (acc.isPremium())
@@ -41,15 +50,15 @@ public class Customer extends User implements Serializable {
         return false;
     }
 
-    public List<Account> getAccounts() {
-        return accounts;
+    public List<Account> getAccounts() throws IOException {
+        return AccountDao.list().stream().filter(item -> item.getCustomerId().equals(this.getCustomerId())).collect(Collectors.toList());
     }
 
     public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
     }
 
-    public void displayInformation() {
+    public void displayInformation() throws IOException {
         Locale locale = new Locale("vi", "VI");
         String pattern = "###,###,###,###";
         DecimalFormat dcf = (DecimalFormat) NumberFormat.getNumberInstance(locale);
@@ -76,6 +85,76 @@ public class Customer extends User implements Serializable {
         for (Account a : getAccounts()) {
             a.displayTransactionsList();
         }
+    }
+
+    public void transfers(Scanner scanner) throws IOException {
+        List<Account> accs = getAccounts();
+        if (!accs.isEmpty()) {
+            Account accountChuyen;
+            Account accountNhan;
+            double amount;
+
+            do {
+                System.out.println("Nhap so tai khoan chuyen tien: ");
+                accountChuyen = getAccountByAccountNumber(accs, scanner.nextLine());
+            } while (accountChuyen == null);
+            do {
+                System.out.println("Nhap so tai khoan nhan tien: ");
+                accountNhan = getAccountByAccountNumber(AccountDao.list(), scanner.nextLine());
+            } while (accountNhan == null || accountNhan.getAccountNumber().equals(accountChuyen.getAccountNumber()));
+            do {
+                System.out.println("Nhap so tien rut(sau khi rut >=50000đ): ");
+                amount = Double.parseDouble(scanner.nextLine());
+            } while (amount < 0 || accountChuyen.getBalance() - amount <50000);
+            while (true) {
+                System.out.print("Xac nhan chuyen " + amount + " từ tai khoan [" + accountChuyen.getAccountNumber() + "] den tai khoan [" + accountNhan.getAccountNumber() + "] (Y/N): ");
+                String choose = scanner.nextLine();
+                switch (choose) {
+                    case "Y":
+                        accountChuyen.transfers(amount);
+                        accountNhan.transfers(-amount);
+                        System.out.println("Chuyen tien thanh cong. bien lai giao dich");
+                        accountChuyen.log(amount, TransactionType.TRANSFERS, accountNhan.getAccountNumber());
+                        break;
+                    case "N":
+                        return;
+                    default:
+                        System.out.println("Nhap lai: ");
+                        continue;
+                }
+                break;
+            }
+
+        }
+    }
+
+    public void withdraw(Scanner scanner) throws IOException {
+        List<Account> accs = getAccounts();
+        if (!accs.isEmpty()) {
+            Account account;
+            double amount;
+
+            do {
+                System.out.println("Nhap so tai khoan: ");
+                account = getAccountByAccountNumber(accs, scanner.nextLine());
+            } while (account == null);
+
+            do {
+                System.out.println("Nhap so tien rut: ");
+                amount = Double.parseDouble(scanner.nextLine());
+            } while (amount < 0);
+            account.withdraw(amount);
+            System.out.println("Rut tien thanh cong. bien lai giao dich");
+            account.log(amount, TransactionType.TRANSFERS, "");
+
+        } else {
+            System.out.println("Khach hang ko co tai khoan nao.");
+        }
+    }
+
+    public Account getAccountByAccountNumber(List<Account> accounts, String accNumber) {
+        Optional<Account> optionalAccount = accounts.stream().filter(item -> item.getAccountNumber().equals(accNumber)).findFirst();
+        return optionalAccount.isPresent() ? optionalAccount.get() : null;
     }
 
 }

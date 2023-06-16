@@ -6,6 +6,8 @@ import vn.funix.fx21678.java.asm04.service.BinaryFileService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AccountDao {
 
@@ -21,8 +23,11 @@ public class AccountDao {
 
     public static void update(Account account) throws IOException {
 
+        ExecutorService  executorService = Executors.newFixedThreadPool(10);
         List<Account> accounts = list();
         boolean hasExist = accounts.stream().anyMatch(item -> item.getAccountNumber().equals(account.getAccountNumber()));
+        executorService.shutdown();
+
 
         List<Account> accountsUpdate;
         if (!hasExist) {

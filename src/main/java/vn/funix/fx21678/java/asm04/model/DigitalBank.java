@@ -86,6 +86,10 @@ public class DigitalBank extends Bank {
         double balance = inputBalance();
         Account account = new Account(customerId, accountNumber, balance);
         AccountDao.update(account);
+        List<Transaction> transactions = TransactionDao.list();
+        Transaction transaction = new Transaction(String.valueOf(transactions.size()), accountNumber, balance, String.valueOf(LocalDateTime.now()), true, TransactionType.DEPOSIT);
+        transactions.add(transaction);
+        TransactionDao.save(transactions);
         System.out.println("Them tai khoan " + accountNumber + " thanh cong");
     }
 
@@ -140,33 +144,34 @@ public class DigitalBank extends Bank {
         }
         Customer customer = getCustomerById(customerId);
         customer.displayInformation();
-        String accRut = "";
-        List<String> accountNumbers = customer.getAccounts().stream().map(Account::getAccountNumber).collect(Collectors.toList());
-        while (true) {
-            System.out.println("Nhap so tai khoan: ");
-            accRut = scanner.nextLine();
-
-            if (!accountNumbers.contains(accRut))
-                System.out.println("Tai khoan khong dung");
-            else
-                break;
-        }
-        String finalAccRut = accRut;
-        Account accountRut = lsAccount.stream().filter(item -> item.getAccountNumber().equals(finalAccRut)).findFirst().get();
-        String localDateTime = String.valueOf(LocalDateTime.now());
-        double sotien = inputBalanceChuyen(accountRut);
-        accountRut.setBalance(accountRut.getBalance() - sotien);
-        AccountDao.update(accountRut);
-
-        Transaction transaction = new Transaction();
-        if (sotien > 0)
-            transaction = new Transaction(String.valueOf(transactions.size()), finalAccRut, -sotien, localDateTime, true, TransactionType.WITHDRAW);
-        else
-            transaction = new Transaction(String.valueOf(transactions.size()), finalAccRut, -sotien, localDateTime, true, TransactionType.DEPOSIT);
-        transactions.add(transaction);
-        TransactionDao.save(transactions);
+//        String accRut = "";
+//        List<String> accountNumbers = customer.getAccounts().stream().map(Account::getAccountNumber).collect(Collectors.toList());
+//        while (true) {
+//            System.out.println("Nhap so tai khoan: ");
+//            accRut = scanner.nextLine();
+//
+//            if (!accountNumbers.contains(accRut))
+//                System.out.println("Tai khoan khong dung");
+//            else
+//                break;
+//        }
+//        String finalAccRut = accRut;
+//        Account accountRut = lsAccount.stream().filter(item -> item.getAccountNumber().equals(finalAccRut)).findFirst().get();
+//        String localDateTime = String.valueOf(LocalDateTime.now());
+//        double sotien = inputBalanceChuyen(accountRut);
+//        accountRut.setBalance(accountRut.getBalance() - sotien);
+//        AccountDao.update(accountRut);
+//
+//        Transaction transaction = new Transaction();
+//        if (sotien > 0)
+//            transaction = new Transaction(String.valueOf(transactions.size()), finalAccRut, -sotien, localDateTime, true, TransactionType.WITHDRAW);
+//        else
+//            transaction = new Transaction(String.valueOf(transactions.size()), finalAccRut, -sotien, localDateTime, true, TransactionType.DEPOSIT);
+//        transactions.add(transaction);
+//        TransactionDao.save(transactions);
+        customer.withdraw(scanner);
         System.out.println("Rut tien thanh cong, bien lai giao dich.");
-        accountRut.log(sotien, TransactionType.WITHDRAW, "");
+//        accountRut.log(sotien, TransactionType.WITHDRAW, "");
     }
 
     public void tranfers(String customerId) throws IOException {
@@ -176,72 +181,73 @@ public class DigitalBank extends Bank {
         }
         Customer customer = getCustomerById(customerId);
         customer.displayInformation();
-        String accChuyen = "";
-        String accNhan = "";
-        List<String> accountNumbers = customer.getAccounts().stream().map(Account::getAccountNumber).collect(Collectors.toList());
-        while (true) {
-            System.out.println("Nhap so tai khoan: ");
-            accChuyen = scanner.nextLine();
+//        String accChuyen = "";
+//        String accNhan = "";
+//        List<String> accountNumbers = customer.getAccounts().stream().map(Account::getAccountNumber).collect(Collectors.toList());
+//        while (true) {
+//            System.out.println("Nhap so tai khoan: ");
+//            accChuyen = scanner.nextLine();
+//
+//            if (!accountNumbers.contains(accChuyen))
+//                System.out.println("Tai khoan khong dung");
+//            else
+//                break;
+//        }
+//        while (true) {
+//            System.out.print("Nhap so tai khoan nhan(exit de thoat): ");
+//            accNhan = scanner.nextLine();
+//            switch (accNhan) {
+//                case "exit":
+//                    System.out.println("Thoat");
+//                    return;
+//                default:
+//                    if (!lsAccountId.contains(accNhan) || accChuyen.equals(accNhan))
+//                        System.out.print("Tai khoan khong dung, hoac trung vơi tk nhận. Nhap lại: ");
+//                    else
+//                        System.out.println("Gui tien den so tai khoan " + accNhan + " | " + getByAccountNumber(accNhan).getName());
+//                    break;
+//            }
+//            break;
+//        }
+//
+//        String finalAccChuyen = accChuyen;
+//        String finalAccNhan = accNhan;
+//        Account accountChuyen = (lsAccount.stream().filter(item -> item.getAccountNumber().equals(finalAccChuyen)).findFirst().get());
+//        Account accountNhan = lsAccount.stream().filter(item -> item.getAccountNumber().equals(finalAccNhan)).findFirst().get();
+//        double sotien = inputBalanceChuyen(accountChuyen);
+//
+//        while (true) {
+//            System.out.print("Xac nhan chuyen " + sotien + " từ tai khoan [" + accChuyen + "] den tai khoan [" + accNhan + "] (Y/N): ");
+//            String choose = scanner.nextLine();
+//            switch (choose) {
+//                case "Y":
+//                    break;
+//                case "N":
+//                    return;
+//                default:
+//                    System.out.println("Nhap lai: ");
+//                    continue;
+//            }
+//            break;
+//        }
+//
+//        accountNhan.setBalance(accountNhan.getBalance() + sotien);
+//        accountChuyen.setBalance(accountChuyen.getBalance() - sotien);
+//
+//        AccountDao.update(accountNhan);
+//        AccountDao.update(accountChuyen);
+        customer.transfers(scanner);
 
-            if (!accountNumbers.contains(accChuyen))
-                System.out.println("Tai khoan khong dung");
-            else
-                break;
-        }
-        while (true) {
-            System.out.print("Nhap so tai khoan nhan(exit de thoat): ");
-            accNhan = scanner.nextLine();
-            switch (accNhan) {
-                case "exit":
-                    System.out.println("Thoat");
-                    return;
-                default:
-                    if (!lsAccountId.contains(accNhan) || accChuyen.equals(accNhan))
-                        System.out.print("Tai khoan khong dung, hoac trung vơi tk nhận. Nhap lại: ");
-                    else
-                        System.out.println("Gui tien den so tai khoan " + accNhan + " | " + getByAccountNumber(accNhan).getName());
-                    break;
-            }
-            break;
-        }
 
-        String finalAccChuyen = accChuyen;
-        String finalAccNhan = accNhan;
-        Account accountChuyen = (lsAccount.stream().filter(item -> item.getAccountNumber().equals(finalAccChuyen)).findFirst().get());
-        Account accountNhan = lsAccount.stream().filter(item -> item.getAccountNumber().equals(finalAccNhan)).findFirst().get();
-        double sotien = inputBalanceChuyen(accountChuyen);
-
-        while (true) {
-            System.out.print("Xac nhan chuyen " + sotien + " từ tai khoan [" + accChuyen + "] den tai khoan [" + accNhan + "] (Y/N): ");
-            String choose = scanner.nextLine();
-            switch (choose) {
-                case "Y":
-                    break;
-                case "N":
-                    return;
-                default:
-                    System.out.println("Nhap lai: ");
-                    continue;
-            }
-            break;
-        }
-
-        accountNhan.setBalance(accountNhan.getBalance() + sotien);
-        accountChuyen.setBalance(accountChuyen.getBalance() - sotien);
-
-        AccountDao.update(accountNhan);
-        AccountDao.update(accountChuyen);
-        System.out.println("Chuyen tien thanh cong. bien lai giao dich");
-
-        String localDateTime = String.valueOf(LocalDateTime.now());
+//        String localDateTime = String.valueOf(LocalDateTime.now());
         //luu lai ls
-        Transaction transactionNhan = new Transaction(String.valueOf(transactions.size()), accNhan, sotien, localDateTime, true, TransactionType.TRANSFERS);
-        Transaction transactionChuyen = new Transaction(String.valueOf(transactions.size()), accChuyen, -sotien, localDateTime, true, TransactionType.TRANSFERS);
-        transactions.add(transactionChuyen);
-        transactions.add(transactionNhan);
-        TransactionDao.save(transactions);
-
-        accountChuyen.log(sotien, TransactionType.TRANSFERS, accNhan);
+//        Transaction transactionNhan = new Transaction(String.valueOf(transactions.size()), accNhan, sotien, localDateTime, true, TransactionType.TRANSFERS);
+//        Transaction transactionChuyen = new Transaction(String.valueOf(transactions.size()), accChuyen, -sotien, localDateTime, true, TransactionType.TRANSFERS);
+//        transactions.add(transactionChuyen);
+//        transactions.add(transactionNhan);
+//        TransactionDao.save(transactions);
+//
+//        accountChuyen.log(sotien, TransactionType.TRANSFERS, accNhan);
 
     }
 

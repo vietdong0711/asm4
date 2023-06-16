@@ -1,11 +1,15 @@
 package vn.funix.fx21678.java.asm04.model;
 
+import vn.funix.fx21678.java.asm04.common.IReport;
+
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Locale;
 
-public class Transaction implements Serializable {
+public class Transaction implements Serializable{
     private static final long serialVersionUID = 1L;
 
     private String id;
